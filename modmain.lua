@@ -52,7 +52,7 @@
 	--GLOBAL.LEIF_ROOTTHORN_COOLDOWN = 2 
 	
 	--猪人boss相关
-	GLOBAL.PIGMAN_HEALTH = 200
+	GLOBAL.PIGMAN_HEALTH = 6000
 	
 	modimport("scripts/rp_post_init.lua")
 	
