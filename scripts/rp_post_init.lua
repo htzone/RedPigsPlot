@@ -118,6 +118,60 @@ local exp_boss_4 = { --世界boss
 "dragonfly",
 }
 
+local function canBeKilled(inst)
+
+	local item = "trinket_"..tostring(math.random(1, 7))
+	local item2 = "trinket_"..tostring(math.random(1, 7))
+	local item3 = "trinket_"..tostring(math.random(1, 7))
+	
+	inst:ListenForEvent("attacked", OnAttackedPig)
+	inst:AddComponent("health")
+	inst.components.health:SetMaxHealth(160)
+	
+	inst:AddComponent("lootdropper")
+	inst.components.lootdropper:SetLoot({
+		"goldnugget", "goldnugget", "goldnugget", "goldnugget", 
+		"pigskin", "meat", "meat", "meat"
+	})
+			
+	inst:AddComponent("combat")
+	inst.components.combat.hiteffectsymbol = "body"
+	
+	inst:ListenForEvent("healthdelta", function(inst, data)
+		if data.newpercent < data.oldpercent then
+			inst.AnimState:PlayAnimation("unimpressed")
+			inst.SoundEmitter:PlaySound("dontstarve/pig/PigKingReject")
+		end
+	end)
+	
+	inst:ListenForEvent("healthdelta", function(inst, data)
+		if data.newpercent == 0 then
+			inst.AnimState:PlayAnimation("sleep_pre")
+			inst.SoundEmitter:PlaySound("dontstarve/pig/PigKingReject")
+		end
+	end)	
+
+	inst:ListenForEvent("death", function(inst)
+		
+		---TheWorld:PushEvent("rp_pigkingbekilled")
+		print("猪王死了1！！！")
+		
+		inst.components.lootdropper:DropLoot()  
+		inst.SoundEmitter:PlaySound("dontstarve/pig/PigKingThrowGold")
+		
+		if item then
+			inst.components.lootdropper:SpawnLootPrefab(item)
+			inst.components.lootdropper:SpawnLootPrefab(item2)
+			inst.components.lootdropper:SpawnLootPrefab(item3)
+		end		
+	end)
+	
+	inst:AddComponent("rp_pushevent")
+	
+end
+
+AddPrefabPostInit("pigking", canBeKilled)
+
 for _,v in ipairs(exp_level_1) do
 	if v then
 		AddPrefabPostInit(v, function(inst) addExpTag(inst, 1) end)

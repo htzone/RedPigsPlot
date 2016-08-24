@@ -79,10 +79,10 @@ local function makeKing(inst)
 	
 		SpawnPrefab("lightning")
 		--TheWorld:PushEvent("rp_kingbekilled", data)
-		monster:ListenForEvent("death", function()
-			print("猪死了！！！")
-			TheWorld:PushEvent("rp_pigkingbekilled")
-		end)
+		--monster:ListenForEvent("death", function()
+		--	print("猪死了！！！")
+		--	TheWorld:PushEvent("rp_pigkingbekilled")
+		--end)
 		
 	elseif monster.prefab == "pigguard" then
 	

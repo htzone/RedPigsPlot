@@ -56,7 +56,7 @@ local _world = TheWorld
 local _ismastersim = _world.ismastersim
 local _ismastershard = _world.ismastershard
 
-_world.isAllNight = false
+--_world.isAllNight = false
 _world.hasNoAnnounced1 = true
 _world.hasNoAnnounced2 = true
 
@@ -534,6 +534,10 @@ if _ismastersim then function self:OnSave()
         elapseddaysinseason = _elapseddaysinseason:value(),
         remainingdaysinseason = _remainingdaysinseason:value(),
         lengths = {},
+		--保存
+		isAllNight = _world.isAllNight,
+		hasNoAnnounced1 = _world.hasNoAnnounced1,
+		hasNoAnnounced2 = _world.hasNoAnnounced2,
     }
 
     for i, v in ipairs(SEASON_NAMES) do
@@ -565,7 +569,32 @@ if _ismastersim then function self:OnLoad(data)
 
         _lengths[i]:set(data.lengths and data.lengths[v] or TUNING[string.upper(v).."_LENGTH"] or 0)
     end
-
+	
+	if data.isAllNight then
+		_world.isAllNight = data.isAllNight
+	else
+		_world.isAllNight = false
+	end
+	
+	if data.hasNoAnnounced1 then
+		_world.hasNoAnnounced1 = data.hasNoAnnounced1
+	else
+		_world.hasNoAnnounced1 = true
+	end
+	
+	if data.hasNoAnnounced2 then
+		_world.hasNoAnnounced2 = data.hasNoAnnounced2
+	else
+		_world.hasNoAnnounced2 = true
+	end
+	
+	--读取
+	--if data.isAllNight and data.hasNoAnnounced1 and data.hasNoAnnounced2 then
+	--	_world.isAllNight = data.isAllNight
+	--	_world.hasNoAnnounced1 = data.hasNoAnnounced1
+	--	_world.hasNoAnnounced2 = data.hasNoAnnounced2
+	--end
+	
     _premode = data.premode == true
     _mode = MODES[data.mode] or MODES.cycle
     _season:set(SEASONS[data.season] or SEASONS.autumn)

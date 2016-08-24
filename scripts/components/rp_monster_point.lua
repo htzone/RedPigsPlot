@@ -1,12 +1,12 @@
 --[[怪物据点 Monster point]]--
 
 local monster_table = {
-	"rocky",
+	--"rocky",
 	"pigman",
-	"bunnyman",
-	"merm",
-	"pigguard",
-	"leif_sparse",
+	--"bunnyman",
+	--"merm",
+	--"pigguard",
+	--"leif_sparse",
 	}
 
 --应该放置在那块区域
