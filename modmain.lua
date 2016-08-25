@@ -57,6 +57,7 @@
 	modimport("scripts/rp_post_init.lua")
 	
 	---------------------------------------------------------------------------------------
+	--怪物列表
 	local monster_table = {
 		"pigman",
 		"merm",
@@ -68,6 +69,7 @@
 		"spider",
 	}
 	
+	--物品列表
 	local goods_table = {
 		"poop",
 	}
@@ -96,40 +98,6 @@
 		AddPrefabPostInit(v, addAttributes_2) --让物品具有新特性的潜质
 	end
 	
-	--[[
-	AddSimPostInit(function()
-		if GLOBAL.TheWorld.ismastersim then
-			GLOBAL.TheWorld:DoTaskInTime(12, function()
-				local pig_king = GLOBAL.TheSim:FindFirstEntityWithTag("king")
-				if pig_king then
-					local x1, y1, z1 = pig_king.Transform:GetWorldPosition()
-					print("find pigking!!!")
-					
-					for i, player in ipairs(GLOBAL.AllPlayers) do
-						print("spawned!-----postion:("..x1..", "..y1..", "..z1..")")
-						player.Transform:SetPosition(x1+3, y1, z1+2)
-					end		
-
-					local pigmanking = GLOBAL.rp_TrySpawn(pig_king, "pigman", 4, 10, 50)
-					
-					if not pigmanking.components.rp_defensive then
-						print("add_defensive!!!")
-						pigmanking:AddComponent("rp_defensive")
-					end
-					
-					pigmanking.components.rp_defensive:Make(DEFENSIVE_KING)
-					--if not pigmanking.components.rp_pigmanking then
-					--	pigmanking:AddComponent("rp_pigmanking")
-					--end
-				else
-					print("no find pigking!!")
-				end
-			end)
-
-		end
-	end)
-	]]--
-	
 	--针对玩家
 	AddPlayerPostInit(function(inst)
 		if inst then
@@ -150,7 +118,8 @@
 	--针对世界
 	AddPrefabPostInit("world", function(inst)
 		if inst.ismastersim then
-			inst:AddComponent("rp_monster_point") --怪物据点机制
+			--inst:AddComponent("rp_monster_point") --怪物据点机制
+			inst:AddComponent("rp_pigking_monster_point") --猪王袭击机制
 			--inst:AddComponent("rp_monster_invade")  --怪物入侵机制
 			inst:AddComponent("rp_killed_handler") --怪物击杀处理
 		end

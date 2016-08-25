@@ -1,8 +1,13 @@
 --[[推送事件组件]]--
 local function OnDeath(inst)
 	inst:ListenForEvent("death", function()
-		print("猪死了2！！！")
-		TheWorld:PushEvent("rp_pigkingbekilled")
+		
+		if inst.prefab == "pigking" then
+			SpawnPrefab("lightning")
+			TheNet:Announce("猪王已死亡，世界即将陷入一片黑暗中！！！")
+			TheWorld:PushEvent("rp_pigkingbekilled")
+		end
+
 	end)
 end
 

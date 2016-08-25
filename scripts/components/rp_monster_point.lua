@@ -1,8 +1,9 @@
 --[[怪物据点 Monster point]]--
+--主要负责一开始怪物的安置和死后重新安置工作
 
 local monster_table = {
-	--"rocky",
-	"pigman",
+	"rocky",
+	--"pigman",
 	--"bunnyman",
 	--"merm",
 	--"pigguard",
@@ -124,7 +125,6 @@ end
 local function updateWorld(world)
 	if world.monster_point_mode and TheWorld.state.cycles >= 1 then
 		if not world.is_pointed then 
-		SpawnPrefab("lightning")
 		SpawnPrefab("lightning")
 		TheNet:Announce("不好啦，这片大陆已经被怪物首领们占领了！！")
 		world:DoTaskInTime(10, function()

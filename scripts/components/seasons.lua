@@ -143,14 +143,15 @@ end or nil
 local function changeToNight(inst)
 	inst.isAllNight = true
 	
-	if inst.hasNoAnnounced1 then
+	--if inst.hasNoAnnounced1 then
 	
-		inst:DoTaskInTime(20, function()
-			TheNet:Announce("猪王已死亡，世界即将陷入一片黑暗中！！！")
-		end)
+		--inst:DoTaskInTime(2, function()
+			
+		--	TheNet:Announce("猪王已死亡，世界即将陷入一片黑暗中！！！")
+		--end)
 		
-		inst.hasNoAnnounced1 = false
-	end
+		--inst.hasNoAnnounced1 = false
+	--end
 	
 	
 	if inst.isAllNight then

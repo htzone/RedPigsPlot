@@ -170,8 +170,10 @@ local function canBeKilled(inst)
 	
 end
 
+--让猪王可杀
 AddPrefabPostInit("pigking", canBeKilled)
 
+--为怪物添加经验值
 for _,v in ipairs(exp_level_1) do
 	if v then
 		AddPrefabPostInit(v, function(inst) addExpTag(inst, 1) end)
@@ -230,7 +232,7 @@ local function KillerRetarget(inst)
         { "character", "animal", "monster" })
 end
 
---不要攻击我的部队
+--不要攻击怪物
 AddPrefabPostInit("killerbee", function(inst)
 	if inst.components.combat then
 		inst.components.combat:SetRetargetFunction(2, KillerRetarget)

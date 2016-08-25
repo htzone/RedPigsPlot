@@ -26,7 +26,12 @@ end
 
 --尝试在目标附近放置怪物
 function rp_TrySpawn(target, prefab_name, min_dist, max_dist, max_trying_times)
-	print("----use utils return-----")
+	--print("----use utils return-----")
+	if min_dist == nil or max_dist == nil then
+		min_dist = 15
+		max_dist = 35
+	end
+	
 	if max_trying_times == nil then
 		max_trying_times = 40
 	end
@@ -63,7 +68,12 @@ end
 
 --尝试在目标附近放置玩家
 function rp_TrySpawnPlayer(target, player, min_dist, max_dist, max_trying_times)
-	print("----use utils return-----")
+	
+	if min_dist == nil or max_dist == nil then
+		min_dist = 15
+		max_dist = 35
+	end
+	
 	if max_trying_times == nil then
 		max_trying_times = 40
 	end
@@ -89,11 +99,51 @@ function rp_TrySpawnPlayer(target, player, min_dist, max_dist, max_trying_times)
 				end
 				--return b
 			else
-				 rp_TrySpawn(target, player, min_dist, max_dist, max_trying_times - 1)
+				 rp_TrySpawnPlayer(target, player, min_dist, max_dist, max_trying_times - 1)
 			end
 		end
 	end
 	
+end
+
+--找到猪王
+function rp_findPigKing()
+	return TheSim:FindFirstEntityWithTag("king")
+end
+
+--在猪王附近安置prefab
+function rp_SpawnPrefabNearPigKing(prefab_name, min_dist, max_dist, max_try_times)
+
+	if min_dist == nil then
+		min_dist = 4
+	end
+	if max_dist == nil then
+		max_dist = 12
+	end
+	if max_try_times == nil then
+		max_try_times = 40
+	end
+	
+	local monster = nil 
+	local pig_king = TheSim:FindFirstEntityWithTag("king")
+	if pig_king then
+		print("find pigking!!!")
+		monster = rp_TrySpawn(pig_king, prefab_name, min_dist, max_dist, max_try_times)	
+	else
+		print("no find pigking!!")
+	end
+	return monster
+end
+
+--在猪王附近安置玩家
+function rp_SpawnPlayerNearPigKing(player)
+	local pig_king = TheSim:FindFirstEntityWithTag("king")
+	if pig_king then
+		print("find pigking!!!")
+		rp_TrySpawnPlayer(pig_king, player, 5, 15, 30)
+	else
+		print("no find pigking!!")
+	end
 end
 
 --函数注入
