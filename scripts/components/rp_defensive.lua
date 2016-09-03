@@ -77,12 +77,14 @@ local function makeKing(inst)
 	--死亡后执行复活计时
 	if monster.prefab == "pigman" then
 	
-		SpawnPrefab("lightning")
 		--TheWorld:PushEvent("rp_kingbekilled", data)
-		--monster:ListenForEvent("death", function()
-		--	print("猪死了！！！")
-		--	TheWorld:PushEvent("rp_pigkingbekilled")
-		--end)
+		monster:ListenForEvent("death", function()
+			SpawnPrefab("lightning")
+			local data = {}
+			data.name = monster.prefab
+			data.pt = Vector3(monster.Transform:GetWorldPosition())
+			TheWorld:PushEvent("rp_kingbekilled", data)
+		end)
 		
 	elseif monster.prefab == "pigguard" then
 	
@@ -100,8 +102,9 @@ local function makeKing(inst)
 	
 				local data = {}
 				data.name = monster.prefab
+				data.pt = Vector3(monster.Transform:GetWorldPosition())
 				TheWorld:PushEvent("rp_kingbekilled", data)
-				
+				TheWorld:PushEvent("rp_over_allnight", data)
 			end
 			
 		end)
@@ -111,13 +114,10 @@ local function makeKing(inst)
 		monster:ListenForEvent("death", function()
 			SpawnPrefab("lightning")
 			local data = {}
-			--if monster.prefab == "merm" then
-			--	data.name = "bunnyman"
-			--elseif monster.prefab == "bunnyman" then
-			--	data.name = "merm"
-			--end
 			data.name = monster.prefab
+			data.pt = Vector3(monster.Transform:GetWorldPosition())
 			TheWorld:PushEvent("rp_kingbekilled", data)
+			TheWorld:PushEvent("rp_over_allnight", data)
 		end)
 		
 	end

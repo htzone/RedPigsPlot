@@ -1,5 +1,5 @@
 -- This information tells other players more about the mod
-name = " 红猪的阴谋(测试啦)"
+name = " A红猪的阴谋(测试啦)"
 description = [[
 
 	这其实是场阴谋，猪王如是说。

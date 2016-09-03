@@ -47,35 +47,44 @@ end
 
 ----执行删除
 function RP_Autodelete:Perish()
-    if self.updatetask ~= nil then
-        self.updatetask:Cancel()
-        self.updatetask = nil
-    end
-	if self.inst then
+
+	if self.inst and not self.inst:HasTag("burnt") then
+	
+		if self.updatetask ~= nil then
+			self.updatetask:Cancel()
+			self.updatetask = nil
+		end
+		
 		if self.inst:HasTag("rp_monster") then
 			local currentscale = self.inst.Transform:GetScale()
 			local collapse = SpawnPrefab("collapse_small")
-			if collapse ~= nil then
+			if collapse then
 				collapse.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
 				collapse.Transform:SetScale(currentscale*1,currentscale*1,currentscale*1)
 			end
 			self.inst:Remove()
 		elseif self.inst:HasTag("poop_bomb") then
-			--local currentscale = self.inst.Transform:GetScale()
+
 			local collapse = SpawnPrefab("die_fx")
 			if collapse ~= nil then
 				collapse.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
 				collapse.Transform:SetScale(2.5,2.5,2.5)
 			end
-			--local data = {0,0,0}
-			--local x,y,z = self.inst.Transform:GetWorldPosition()
 		
 			self.inst:PushEvent("rp_poop_bomb")
 			self.inst:Remove()
 		else
+			local currentscale = self.inst.Transform:GetScale()
+			local collapse = SpawnPrefab("collapse_small")
+			if collapse then
+				collapse.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
+				collapse.Transform:SetScale(currentscale*1,currentscale*1,currentscale*1)
+			end
 			self.inst:Remove()
 		end
+		
 	end
+
 end
 
 ----设置删除时间

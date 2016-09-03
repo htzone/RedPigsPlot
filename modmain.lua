@@ -13,6 +13,11 @@
 	
 	--GLOBAL.GAME_DIFFICULTY = GetModConfigData("invade_style")
 	--------------【声明全局变量】--------------
+	--游戏中一天的时间（秒）
+	GLOBAL.GAME_DAY = GLOBAL.TUNING.TOTAL_DAY_TIME
+	
+	--怪物被安置的时间
+	GLOBAL.MONSTER_START_POINT_DAY = 1
 	--进攻怪物类型
 	GLOBAL.INVASIVE_MOB = 1
 	GLOBAL.INVASIVE_COMMANDER = 2
@@ -27,7 +32,7 @@
 	GLOBAL.BOSS_REVIVE_TIME = 1000
 	
 	--兔人boss相关
-	GLOBAL.BUNNYMAN_HEALTH = 8000 --兔人boss生命值
+	GLOBAL.BUNNYMAN_HEALTH = 400 --兔人boss生命值
 	GLOBAL.BUNNYMAN_HYPONSIS_COOLDOWN = 8 --催眠冷却时间
 	GLOBAL.BUNNYMAN_LIGHTING_COOLDOWN = 8 --落雷冷却时间
 	GLOBAL.BUNNYMAN_HYPONSIS_RANGE = 20 --催眠范围
@@ -52,7 +57,7 @@
 	--GLOBAL.LEIF_ROOTTHORN_COOLDOWN = 2 
 	
 	--猪人boss相关
-	GLOBAL.PIGMAN_HEALTH = 6000
+	GLOBAL.PIGMAN_HEALTH = 100
 	
 	modimport("scripts/rp_post_init.lua")
 	
@@ -118,19 +123,24 @@
 	--针对世界
 	AddPrefabPostInit("world", function(inst)
 		if inst.ismastersim then
-			--inst:AddComponent("rp_monster_point") --怪物据点机制
-			inst:AddComponent("rp_pigking_monster_point") --猪王袭击机制
+			inst:AddComponent("rp_monster_point") --怪物据点机制
+			inst:AddComponent("rp_pigking_invade") --猪王袭击机制
 			--inst:AddComponent("rp_monster_invade")  --怪物入侵机制
 			inst:AddComponent("rp_killed_handler") --怪物击杀处理
 		end
 	end)	
 
-	--[[
-	local function addGoodsAttributes(inst)
+	--自定义物品列表
+	local rp_prefab_table = {
+	"gravestone",
+	}
+	
+	local function addPrefabAttributes(inst)
 		if GLOBAL.TheWorld.ismastersim then
-			inst:AddComponent("rp_goods")
+			inst:AddComponent("rp_prefabs")
 		end
 	end
 	
-	AddPrefabPostInit("batbat", addGoodsAttributes)
-	]]--
+	for _,v in pairs(rp_prefab_table) do
+		AddPrefabPostInit(v, addPrefabAttributes) --我的自定义物品
+	end

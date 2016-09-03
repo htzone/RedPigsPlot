@@ -21,12 +21,12 @@ self.inst = inst
 local _healthPercent = nil
 local _isSetHome = false
 local _homePos = nil
-local _isSecondState = false
+--local _isSecondState = false
 
 self.inst.healthPercent = nil
 self.inst.isSetHome = false
 self.inst.homePos = nil 
-self.inst.isSecondState = false
+--self.inst.isSecondState = false
 self.inst.tag = 1
 
 --------------------------------------------------------------------------
@@ -77,10 +77,10 @@ end
 
 local function OnHealthDelta1(inst, data)
     if inst.components.health:GetPercent() < .5 then
-		if not _isSecondState then
+		if not inst.isSecondState then
 			inst.sg:GoToState("taunt")
 			print("change to second！")
-			_isSecondState = true
+			inst.isSecondState = true
 			inst.beardlord = true
 			inst.AnimState:SetBuild("manrabbit_beard_build")
 			
@@ -96,9 +96,9 @@ local function OnHealthDelta1(inst, data)
 			inst.components.locomotor.runspeed = 5
 		end
 	else
-		if _isSecondState then
+		if inst.isSecondState then
 			print("change to first！")
-			_isSecondState = false
+			inst.isSecondState = false
 			inst.beardlord = false
 			inst.AnimState:SetBuild("manrabbit_build")
 			
@@ -220,13 +220,13 @@ function self:start()
 	end
 
 	--血多厚
-	self.inst.components.health:SetMaxHealth(PIGMAN_HEALTH)
+	self.inst.components.health:SetMaxHealth(BUNNYMAN_HEALTH)
 	self.inst.components.health:StartRegen(400, 100)
 	if self.inst.healthPercent ~= nil then
 		print("healthPercent not null")
 		self.inst.components.health:SetPercent(self.inst.healthPercent)
 	end
-	--self.inst:ListenForEvent("healthdelta", OnHealthDelta1)
+	self.inst:ListenForEvent("healthdelta", OnHealthDelta1)
 
 	--战斗力强不强
 	self.inst.components.combat:SetDefaultDamage(70)
@@ -280,13 +280,12 @@ function self:start()
 	self.inst:SetBrain(brain)
 	self.inst:SetStateGraph("rp_SGbunnyking")
 end
+
 --长得咋样
---if _isSecondState then
-	--self.inst.AnimState:SetBuild("manrabbit_beard_build")
---else
---	self.inst.AnimState:SetBuild("manrabbit_build")
---end
-
-
+if self.inst.isSecondState then
+	self.inst.AnimState:SetBuild("manrabbit_beard_build")
+else
+	self.inst.AnimState:SetBuild("manrabbit_build")
+end
 
 end)

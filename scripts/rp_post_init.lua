@@ -10,7 +10,7 @@ local TheSim = GLOBAL.TheSim
 local POOP_BOMB_DELAY = 3 --大便炸弹定时时间
 local POOP_BOMB_RANG = 4 --大便炸弹爆炸范围
 local POOP_BOMB_DIST = 18 --扔大便炸弹的距离
-
+local PIGKING_HEALTH = 100
 --require "rp_utils"
 --local werebeast = require "components/werebeast"
 
@@ -126,7 +126,7 @@ local function canBeKilled(inst)
 	
 	inst:ListenForEvent("attacked", OnAttackedPig)
 	inst:AddComponent("health")
-	inst.components.health:SetMaxHealth(160)
+	inst.components.health:SetMaxHealth(PIGKING_HEALTH)
 	
 	inst:AddComponent("lootdropper")
 	inst.components.lootdropper:SetLoot({

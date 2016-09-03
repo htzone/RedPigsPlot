@@ -142,18 +142,7 @@ end or nil
 
 local function changeToNight(inst)
 	inst.isAllNight = true
-	
-	--if inst.hasNoAnnounced1 then
-	
-		--inst:DoTaskInTime(2, function()
-			
-		--	TheNet:Announce("猪王已死亡，世界即将陷入一片黑暗中！！！")
-		--end)
-		
-		--inst.hasNoAnnounced1 = false
-	--end
-	
-	
+
 	if inst.isAllNight then
 		print("function isAllNight is true!")
 	else
@@ -161,6 +150,34 @@ local function changeToNight(inst)
 	end
 	
 end
+
+local function overAllNight(inst)
+	if inst.isAllNight == true then
+		inst.isAllNight = false
+		--猪王复活
+		local pigking_grave = TheSim:FindFirstEntityWithTag("pigking_grave")
+		
+		if pigking_grave then
+		
+			--玩家安置代码
+			for n,player in pairs(AllPlayers) do 
+				rp_TrySpawnPlayer(pigking_grave, player, 2, 10, 30)	
+			end
+			
+			SpawnPrefab("pigking").Transform:SetPosition(pigking_grave.Transform:GetWorldPosition())
+			local fx = SpawnPrefab("die_fx")
+			fx.Transform:SetPosition(pigking_grave.Transform:GetWorldPosition())
+			local currentscale = fx.Transform:GetScale()
+			fx.Transform:SetScale(currentscale*2.5,currentscale*2.5,currentscale*2.5)
+			pigking_grave:Remove()
+		end
+		
+		inst:DoTaskInTime(0, function()
+			TheNet:Announce("漫长的黑夜已经结束，黎明的曙光即将来临！！！")
+		end)
+	end
+end
+
 
 local PushSeasonClockSegs = _ismastersim and function()
     if not _ismastershard then
@@ -178,6 +195,9 @@ local PushSeasonClockSegs = _ismastersim and function()
 		
 		--当猪王被杀后变成永夜模式
 		_world:ListenForEvent("rp_pigkingbekilled", changeToNight)
+		
+		--恢复光明
+		_world:ListenForEvent("rp_over_allnight", overAllNight)
 		
 		if _world.isAllNight then
 			print("isAllNight is true!")
