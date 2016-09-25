@@ -140,15 +140,29 @@ local GetModifiedSegs = _ismastersim and function(segs, mod)
 	return retsegs
 end or nil
 
-local function changeToNight(inst)
-	inst.isAllNight = true
-
-	if inst.isAllNight then
-		print("function isAllNight is true!")
-	else
-		print("function isAllNight is false!")
-	end
+local function onPigKingBeKilled(inst, data)
 	
+	local pt = data.pt
+	if not inst.isAllNight then
+		--安置墓碑
+		inst:DoTaskInTime(2, function()
+			SpawnPrefab("lightning").Transform:SetPosition(pt:Get())
+			TheNet:Announce(ANNOUNCE_SPEECH_6)
+			local pigking_grave = SpawnPrefab("gravestone")
+			if pigking_grave and pigking_grave.Transform then
+				pigking_grave.Transform:SetPosition(pt:Get())
+				pigking_grave:AddTag("pigking_grave")
+				if not pigking_grave.components.rp_prefabs then
+					pigking_grave:AddComponent("rp_prefabs")
+				end
+				pigking_grave.components.rp_prefabs:makePrefab() --定制prefab
+			end
+		end)
+		
+				
+		inst.isAllNight = true
+	end
+
 end
 
 local function overAllNight(inst)
@@ -173,7 +187,7 @@ local function overAllNight(inst)
 		end
 		
 		inst:DoTaskInTime(0, function()
-			TheNet:Announce("漫长的黑夜已经结束，黎明的曙光即将来临！！！")
+			TheNet:Announce(ANNOUNCE_SPEECH_8)
 		end)
 	end
 end
@@ -194,7 +208,7 @@ local PushSeasonClockSegs = _ismastersim and function()
         p = .5 - math.sin(PI * p) * .5
 		
 		--当猪王被杀后变成永夜模式
-		_world:ListenForEvent("rp_pigkingbekilled", changeToNight)
+		_world:ListenForEvent("rp_pigkingbekilled", onPigKingBeKilled)
 		
 		--恢复光明
 		_world:ListenForEvent("rp_over_allnight", overAllNight)
@@ -209,7 +223,7 @@ local PushSeasonClockSegs = _ismastersim and function()
 			
 			if _world.hasNoAnnounced2 then
 				_world:DoTaskInTime(10, function()
-					TheNet:Announce("小伙伴们，请找到复活猪王的方法，让世界重返光明！！!")
+					TheNet:Announce(ANNOUNCE_SPEECH_7)
 				end)
 				_world.hasNoAnnounced2 = false
 			end

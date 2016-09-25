@@ -41,11 +41,17 @@ local function _BasicWakeCheck(inst)
 end
 
 local function ShouldSleep(inst)
-    return false
+    local homePos = inst.components.knownlocations:GetLocation("home")
+    return homePos ~= nil
+        and inst:GetDistanceSqToPoint(homePos:Get()) < SLEEP_DIST_FROMHOME_SQ
+        and not _BasicWakeCheck(inst)
 end
 
 local function ShouldWake(inst)
-    return true
+     local homePos = inst.components.knownlocations:GetLocation("home")
+    return (homePos ~= nil and
+            inst:GetDistanceSqToPoint(homePos:Get()) >= SLEEP_DIST_FROMHOME_SQ)
+        or _BasicWakeCheck(inst)
 end
 
 local function RememberKnownLocation(inst)

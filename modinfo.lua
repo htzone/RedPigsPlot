@@ -1,12 +1,12 @@
 -- This information tells other players more about the mod
-name = " A红猪的阴谋(测试啦)"
+name = " 小红猪的阴谋"
 description = [[
+"在这个世界上别太依赖任何人，因为当你在黑暗中挣扎的时候，连你的影子也会离开你。" 猪王如是说...
 
-	这其实是场阴谋，猪王如是说。
-
+异世界冒险者们，一起来揭开饥荒世界的真正面目吧！
 ]]
 
-author = "RedPig"
+author = "RedPig(红猪)"
 version = "1.3.91"
 
 -- This is the URL name of the mod's thread on the forum; the part after the index.php? and before the first & in the URL

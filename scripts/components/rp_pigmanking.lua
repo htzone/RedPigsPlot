@@ -171,13 +171,14 @@ end
 --[[ Initialization/初始化]]
 --------------------------------------------------------------------------
 function self:start()
-	print("tag--"..self.inst.tag)
+
+	self.inst:AddTag("rp_redpig")
 	self.inst.AnimState:OverrideSymbol("swap_hat", "hat_ruins", "swap_hat")
 	self.inst.AnimState:Show("HAT")
 	self.inst.AnimState:Show("HAT_HAIR")
 	self.inst.AnimState:Hide("HAIR_NOHAT")
 	self.inst.AnimState:Hide("HAIR")
-
+	
 
 	local r, g, b = HexToPercentColor("#FF0705")
 		--设置怪物颜色

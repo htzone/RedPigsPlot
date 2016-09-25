@@ -11,13 +11,13 @@ local START_FACE_DIST = 4
 local KEEP_FACE_DIST = 6
 local MAX_CHASE_TIME = 60
 local MAX_CHASE_DIST = 60
-local RUN_AWAY_DIST = 6
-local STOP_RUN_AWAY_DIST = 8
+local RUN_AWAY_DIST = 5
+local STOP_RUN_AWAY_DIST = 6
 local WANDER_DIST = 16
 
-local DAMAGE_UNTIL_SHIELD = 400
+local DAMAGE_UNTIL_SHIELD = 100
 local AVOID_PROJECTILE_ATTACKS = false
-local SHIELD_TIME = 4
+local SHIELD_TIME = 3
 
 local function GetFaceTargetFn(inst)
     local target = FindClosestPlayerToInst(inst, START_FACE_DIST, true)
@@ -44,7 +44,6 @@ function RockyBrain:OnStart()
             ChaseAndAttack(self.inst, MAX_CHASE_TIME, MAX_CHASE_DIST)),
 		--如果攻击的是墙则不要走位
 		WhileNode(function() 
-		
 		local radius = 1.5 + (self.inst.Physics and self.inst.Physics:GetRadius() or 0)
 		local wall_target = FindEntity(self.inst, radius, 
 			function(guy) 
@@ -61,7 +60,7 @@ function RockyBrain:OnStart()
         RunAway(self.inst, function() return self.inst.components.combat.target end, RUN_AWAY_DIST, STOP_RUN_AWAY_DIST)),
 		
         FaceEntity(self.inst, GetFaceTargetFn, KeepFaceTargetFn),
-        --Wander(self.inst, function() return self.inst.components.knownlocations:GetLocation("herd") end, WANDER_DIST)
+        Wander(self.inst),
     }, .25)
 
     self.bt = BT(self.inst, root)

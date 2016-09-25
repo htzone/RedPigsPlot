@@ -32,7 +32,7 @@ local LOOTS =
 	teleportato_ring = 1, --环
 	teleportato_box =1, --盒
 	teleportato_crank = 1, --柄
-	ghost = 4,
+	ghost = 1,
 	minotaurhorn = 1,
 	deerclops_eyeball = 1,
 	bearger_fur = 1,
@@ -64,8 +64,10 @@ end
 --怪物boss的坟墓
 local function rp_monsterking_grave(inst)
 	--设置外形
-	local r, g, b = HexToPercentColor("#FFE559")
-	inst.AnimState:SetMultColour(r, g, b, 1)
+	if inst.color then
+		local r, g, b = HexToPercentColor(inst.color)
+		inst.AnimState:SetMultColour(r, g, b, 1)
+	end
 	local currentscale = inst.Transform:GetScale()
 	inst.Transform:SetScale(currentscale*2.5,currentscale*2.5,currentscale*2.5)
 	--设置掉落物
@@ -84,6 +86,11 @@ local function rp_monsterking_grave(inst)
 	
 end
 
+local function rp_teleportato_base(inst)
+	local r, g, b = HexToPercentColor("#000000")
+	inst.AnimState:SetMultColour(r, g, b, .8)
+end
+
 local RP_Prefabs = Class(function(self, inst)
 	self.inst = inst
 	self.inst.is_rp_prefab = false
@@ -100,8 +107,15 @@ function RP_Prefabs:makePrefab()
 	elseif self.inst.prefab == "gravestone" and self.inst:HasTag("monsterking_grave") then
 		self.inst.tag = "monsterking_grave"
 		rp_monsterking_grave(self.inst)
-	end
+	elseif self.inst.prefab == "teleportato_base" then
+		rp_teleportato_base(self.inst)
+ 	end
  	
+end
+
+--设置颜色
+function RP_Prefabs:setColor(color)
+	self.inst.color = color
 end
 
 function RP_Prefabs:OnSave()
@@ -110,6 +124,7 @@ function RP_Prefabs:OnSave()
 	{
 		is_rp_prefab = self.inst.is_rp_prefab,
 		tag = self.inst.tag, 
+		color = self.inst.color
 	}
 end
 
@@ -122,6 +137,10 @@ function RP_Prefabs:OnLoad(data)
 		
 		if data.is_rp_prefab then
 			self:makePrefab()
+		end
+		
+		if data.color then
+			self.inst.color = data.color
 		end
 		
 	end

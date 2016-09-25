@@ -2,11 +2,11 @@
 --主要负责一开始怪物的安置和死后重新安置工作
 
 local monster_table = {
-	--"rocky",
+	"rocky",
 	"bunnyman",
-	--"merm",
-	--"pigguard",
-	--"leif_sparse",
+	"merm",
+	"pigguard",
+	"leif_sparse",
 	}
 
 --判断怪物应该放置在那块区域
@@ -34,16 +34,6 @@ end
 
 tilefns.leif_sparse = function(tile)
 	return (tile == GROUND.FOREST)
-end
-
---将怪物安置在猪王周边
-local function rp_SpawnNearPigKing(prefab_name)
-	local monster = nil 
-	local pig_king = TheSim:FindFirstEntityWithTag("king")
-	if pig_king then
-		monster = rp_TrySpawn(pig_king, prefab_name, 4, 10, 50)	
-	end
-	return monster
 end
 
 --根据地皮类型来放置Prefab
@@ -83,7 +73,6 @@ local function makePigBrother(monster)
 			b:AddComponent("rp_defensive")
 		end
 		b.components.rp_defensive:Make(DEFENSIVE_KING)
-		print("little pig spawn")
 	end
 end
 
@@ -113,62 +102,91 @@ end
 local function getNameBasePrefab(prefab_name)
 	local boss_name = ""
 	if prefab_name == "pigman" then
-		boss_name = "红猪傀儡"
+		boss_name = PIGMANBOSS_NAME
 	elseif prefab_name == "merm" then
-		boss_name = "鱼人王"
+		boss_name = MERM_KING_NAME
 	elseif prefab_name == "bunnyman" then
-		boss_name = "兔人王"
+		boss_name = BUNNYMAN_KING_NAME
 	elseif prefab_name == "rocky" then
-		boss_name = "石虾首领"
+		boss_name = ROCKY_KING_NAME
 	elseif prefab_name == "pigguard" then
-		boss_name = "野猪兄弟"
+		boss_name = PIGBROTHER_NAME
 	elseif prefab_name == "leif_sparse" then
-		boss_name = "树精长老"
+		boss_name = LEIF_KING_NAME
 	end
 	return boss_name
+end
+
+--安置红猪傀儡
+local function redpigSpawner(monster_name)
+	local monster = rp_spawnPrefabInWorld(monster_name)
+	if monster then
+		local portal = rp_findFirstPrefabByTag("portal")
+		if portal == nil then
+			print("portal = nil")
+			return monster
+		end
+		
+		local portal_pt = portal:GetPosition()
+		local x,y,z = monster.Transform:GetWorldPosition()
+		local monster_pt = Point(x, 0, z)
+		while monster_pt:Dist(portal_pt) < 300 do
+			monster = redpigSpawner(monster_name)
+		end
+	end
+	
+	return monster
 end
 
 --世界在运行 用于初次放置怪物据点
 local function updateWorld(world)
 	if world.monster_point_mode and TheWorld.state.cycles >= MONSTER_START_POINT_DAY then
 		if not world.is_pointed then 
-		SpawnPrefab("lightning")
-		TheNet:Announce("不好啦，这片大陆已经被怪物首领们占领了！！")
-		world:DoTaskInTime(10, function()
-			TheNet:Announce("被召唤至此的人们啊，赶快行动起来吧！！！")
-		end)
-		
-		--givePlayerTaskSpeech("★任务：抵御与反击")
-		
-		local monster = nil
-		
-		local start_monster_str = monster_table[math.random(#monster_table)]
-		
-		--安置红猪傀儡
-		monster = rp_SpawnNearPigKing("pigman")
-		
-		if monster then
-			makePointMonsterKing(monster)
-		end
-		
-		--安置其他怪物boss
-		for i = 1, #monster_table do 
+			SpawnPrefab("lightning")
+			TheNet:Announce(ANNOUNCE_SPEECH_1)
+			world:DoTaskInTime(10, function()
+				TheNet:Announce(ANNOUNCE_SPEECH_2)
+			end)
 			
-			monster = rp_SpawnPrefabInWorldByTile(monster_table[i])
+			local monster = nil
+			
+			--测试
+			local start_monster_str = monster_table[math.random(#monster_table)]
+			
+			--安置红猪傀儡
+			--monster = rp_spawnPrefabInWorld("pigman")
+			monster = redpigSpawner("pigman")
+			
 			if monster then
 				makePointMonsterKing(monster)
 			end
 			
-			--随机怪物安置玩家代码
-			if monster_table[i] == start_monster_str then 
-				for n,player in pairs(AllPlayers) do 
-					rp_TrySpawnPlayer(monster, player, 2, 10, 30)
-				end
+			if monster == nil then
+				print("monster is nil")
 			end
 			
-		end
-		
-		world.is_pointed = true
+			for _,player in pairs(AllPlayers) do 
+				rp_TrySpawnPlayer(monster, player)
+			end
+			
+			--安置其他怪物boss
+			for i = 1, #monster_table do 
+				
+				monster = rp_SpawnPrefabInWorldByTile(monster_table[i])
+				if monster then
+					makePointMonsterKing(monster)
+				end
+				
+				--随机怪物安置玩家代码(测试)
+				--if monster_table[i] == start_monster_str then 
+				--	for n,player in pairs(AllPlayers) do 
+				--		rp_TrySpawnPlayer(monster, player, 2, 10, 30)
+				--	end
+				--end
+				--------------------------------
+			end
+			
+			world.is_pointed = true
 		end
 		--world.components.rp_monster_invade:SetIfCanInvade(false)
 	end
@@ -179,15 +197,10 @@ end
 local function respawnPointInWorld(monster_str)
 	SpawnPrefab("lightning")
 	local boss_name = getNameBasePrefab(monster_str)
-	TheNet:Announce("恐怖再一次降临，"..boss_name.." 复活了！！！")
-	
+	TheNet:Announce(ANNOUNCE_SPEECH_3_1..boss_name..ANNOUNCE_SPEECH_3_2)
+
 	local monster = rp_SpawnPrefabInWorldByTile(monster_str)
-	makePigBrother(monster)
-	
-	if not monster.components.rp_defensive then
-		monster:AddComponent("rp_defensive")
-	end
-	monster.components.rp_defensive:Make(DEFENSIVE_KING)
+	makePointMonsterKing(monster)
 	
 end
 
@@ -209,7 +222,8 @@ function executeReInvadeTask(inst, monster_name)
 				inst.tasks[monster_name]:Cancel()
 				inst.tasks[monster_name] = nil
 				inst.revive_list[monster_name] = nil
-			end		
+			end	
+			
 		end
 	end)
 end
@@ -237,6 +251,21 @@ local function startReInvadeTimer(inst, data)
 	end
 end
 
+--获取怪物墓碑的颜色
+local function getColorForMonsterKingGrave(monster_prefab)
+	if monster_prefab == "merm" then
+		return "#80B547"
+	elseif monster_prefab == "bunnyman" then
+		return "#F8EB98"
+	elseif monster_prefab == "rocky" then
+		return "#C8D6E0"
+	elseif monster_prefab == "pigguard" then
+		return "#8B643E"
+	elseif monster_prefab == "leif_sparse" then
+		return "#726139"
+	end
+end
+
 --当怪物国王被击杀时执行
 local function onKingBeKilled(inst, data)
 	if data then
@@ -248,21 +277,17 @@ local function onKingBeKilled(inst, data)
 				if fx then
 					fx.Transform:SetPosition(data.pt:Get())
 					fx.Transform:SetScale(2.5,2.5,2.5)
-				end
+				end	
 				teleportato_base.Transform:SetPosition(data.pt:Get())
+				rp_makePrefab(teleportato_base)
 			end
 		else
 			--国王的坟墓
 			local monsterking_grave = SpawnPrefab("gravestone")
 			if monsterking_grave then
-				
 				monsterking_grave.Transform:SetPosition(data.pt:Get())
-				print("make grave!!!!")
 				monsterking_grave:AddTag("monsterking_grave")
-				if not monsterking_grave.components.rp_prefabs then
-					monsterking_grave:AddComponent("rp_prefabs")
-				end
-				monsterking_grave.components.rp_prefabs:makePrefab() --定制prefab
+				rp_makePrefab(monsterking_grave, getColorForMonsterKingGrave(data.name)) --定制prefab
 			end
 			
 			if inst.components.rp_monster_invade then
@@ -278,21 +303,20 @@ local function onKingBeKilled(inst, data)
 			--启动复活计时器
 			startReInvadeTimer(inst, data)	
 			
-			--让玩家传送到最近的boss
-			inst:DoTaskInTime(20, function()
+			--让玩家传送到最近的boss(测试)--
+			inst:DoTaskInTime(15, function()
 				local monster_king = TheSim:FindFirstEntityWithTag("pointed_monster_king")
 				
 				if monster_king then
 					--玩家安置代码
-					--for n,player in pairs(AllPlayers) do 
-					--	rp_TrySpawnPlayer(monster_king, player, 2, 10, 30)	
-					--end
+					for n,player in pairs(AllPlayers) do 
+						rp_TrySpawnPlayer(monster_king, player, 2, 10, 30)	
+					end
 				else
 					print("no find monster king!!")
 				end
-				
 			end)
-		
+			----------------------------------
 		end
 	end
 end

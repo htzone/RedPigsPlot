@@ -12,17 +12,8 @@ local function makeKing(inst)
 	
 	local monster = inst
 	
-	monster:AddTag("shadowboss")
-	monster:AddTag("rp_monster")
-	monster:AddTag("rp_monster_king")
-	monster:AddTag("wave_monster")
-	monster:AddTag("houndedKiller")
-	monster:AddTag("hostile")
-	--monster:AddTag("INLIMBO")
-	--monster:AddTag("insect")
-	
-	monster:AddTag("pointed_monster_king")
-	--monster:AddTag("pointed_monster")
+	--添加tag
+	rp_addDefensiveKingTag(monster)
 	
 	if monster.prefab == "bunnyman" then
 		if not monster.components.rp_bunnymanking then
@@ -76,8 +67,6 @@ local function makeKing(inst)
 	
 	--死亡后执行复活计时
 	if monster.prefab == "pigman" then
-	
-		--TheWorld:PushEvent("rp_kingbekilled", data)
 		monster:ListenForEvent("death", function()
 			SpawnPrefab("lightning")
 			local data = {}

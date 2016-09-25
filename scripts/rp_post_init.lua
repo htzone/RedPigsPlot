@@ -10,7 +10,7 @@ local TheSim = GLOBAL.TheSim
 local POOP_BOMB_DELAY = 3 --大便炸弹定时时间
 local POOP_BOMB_RANG = 4 --大便炸弹爆炸范围
 local POOP_BOMB_DIST = 18 --扔大便炸弹的距离
-local PIGKING_HEALTH = 100
+local PIGKING_HEALTH = 5000
 --require "rp_utils"
 --local werebeast = require "components/werebeast"
 
@@ -120,6 +120,20 @@ local exp_boss_4 = { --世界boss
 
 local function canBeKilled(inst)
 
+	local function OnAttacked(inst, data)
+		local attacker = data and data.attacker
+		if attacker then
+			if inst.components.combat:CanTarget(attacker) and not attacker:HasTag("pig") then
+				inst.components.combat:ShareTarget(attacker, 100, function(dude)
+					return dude:HasTag("pig")	
+				end, 20)
+			end
+		end
+	end
+	
+	inst:AddTag("pig")
+	inst:ListenForEvent("attacked", OnAttacked)
+	
 	local item = "trinket_"..tostring(math.random(1, 7))
 	local item2 = "trinket_"..tostring(math.random(1, 7))
 	local item3 = "trinket_"..tostring(math.random(1, 7))

@@ -170,21 +170,21 @@ end
 local function getMonsterName(monster)
 	local monster_name = ""
 	if monster.prefab == "pigman" then
-		monster_name = "红猪傀儡"
+		monster_name = PIGMANBOSS_NAME
 	elseif monster.prefab == "merm" then
-		monster_name = "鱼人王"
+		monster_name = MERM_KING_NAME
 	elseif monster.prefab == "bunnyman" then
-		monster_name = "兔人王"
+		monster_name = BUNNYMAN_KING_NAME
 	elseif monster.prefab == "pigguard" then
 		if monster:HasTag("little_pig") then
-			monster_name = "野猪弟弟"
+			monster_name = LITTLE_PIGBROTHER_NAME
 		elseif monster:HasTag("big_pig") then
-			monster_name = "野猪哥哥"
+			monster_name = BIG_PIGBROTHER_NAME
 		end
 	elseif monster.prefab == "rocky" then
-		monster_name = "石虾首领"
+		monster_name = ROCKY_KING_NAME
 	elseif monster.prefab == "leif_sparse" then
-		monster_name = "树精长老"
+		monster_name = LEIF_KING_NAME
 	end
 	return monster_name
 end
@@ -192,7 +192,7 @@ end
 local function handlePointKilled(inst, victim, player)
 	
 	local monster_name = getMonsterName(victim)
-	TheNet:Announce(monster_name.." 已被 "..player.name.." 击杀！！！")
+	TheNet:Announce(monster_name..ANNOUNCE_SPEECH_4_1..player.name..ANNOUNCE_SPEECH_4_2)
 	local item = givePointKillItem(victim.prefab)
 	
 	inst:DoTaskInTime(10, function()
@@ -201,7 +201,7 @@ local function handlePointKilled(inst, victim, player)
 		and player.components.inventory then 
 			SpawnPrefab("lightning")
 			player.components.inventory:GiveItem(SpawnPrefab(item[1]))
-			TheNet:Announce("恭喜 "..player.name.." 获得了"..monster_name.."的"..item[2].."！！")
+			TheNet:Announce(ANNOUNCE_SPEECH_5_1..player.name..ANNOUNCE_SPEECH_5_2..monster_name..ANNOUNCE_SPEECH_5_3..item[2]..ANNOUNCE_SPEECH_5_4)
 		end
 	end)
 

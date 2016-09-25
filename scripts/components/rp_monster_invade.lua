@@ -60,9 +60,9 @@
 				temp_num = (temp_num + 1) % player_num
 			end
 			
-			for k,v in pairs(allow_num) do
-				if AllPlayers[v] then
-					table.insert(_AllowPlayers, AllPlayers[v])
+			for _,num in pairs(allow_num) do
+				if AllPlayers[num] then
+					table.insert(_AllowPlayers, AllPlayers[num])
 				end
 			end
 		end
