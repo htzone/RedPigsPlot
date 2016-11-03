@@ -4,7 +4,7 @@
 	local SpawnPrefab = GLOBAL.SpawnPrefab
 	local COLLISION = GLOBAL.COLLISION
 	local AllPlayers = GLOBAL.AllPlayers
-	
+	--test
 	-------------【依赖文件】--------------
 	require "rp_debug"
 	require "rp_utils"
